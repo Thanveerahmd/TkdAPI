@@ -1,17 +1,19 @@
-using TkdScoringApp.API.iService;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using TkdScoringApp.API.Data;
+using TkdScoringApp.API.iService;
 
 namespace TkdScoringApp.API.Services
 {
     public class TkdRepo : iTkdRepo
     {
-        private DataContext _context;
+        private readonly DataContext _context;
 
         public TkdRepo(DataContext context)
         {
             _context = context;
         }
- 
+
         public void Add<T>(T entity) where T : class
         {
             _context.Add(entity);
@@ -34,7 +36,11 @@ namespace TkdScoringApp.API.Services
             _context.AddRange(entity);
 
         }
+    
+        public async Task<bool> Save()
+        {
+            return await _context.SaveChangesAsync() > 0;
+        }
 
     }
 }
-

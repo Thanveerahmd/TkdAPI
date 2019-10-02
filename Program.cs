@@ -22,4 +22,3 @@ namespace TkdScoringApp.API
                 .UseStartup<Startup>();
     }
 }
-

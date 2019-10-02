@@ -1,47 +1,82 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using TkdScoringApp.API.Dto;
+using TkdScoringApp.API.Entities;
+using TkdScoringApp.API.iService;
 
 namespace TkdScoringApp.API.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("match")]
     public class MatchController : ControllerBase
     {
-        // GET api/values
-        [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-        
+        private readonly IMapper _mapper;
+        private readonly iTkdRepo _repo;
+        private readonly iScoring _scoring;
 
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
+        public MatchController(
+               IMapper mapper,
+               iTkdRepo repo,
+               iScoring scoring
+               )
         {
-            return "value";
-        }
+            _repo = repo;
+            _scoring = scoring;
+            _mapper = mapper;
 
-        // POST api/values
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
         }
 
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPost("match")]
+        [AllowAnonymous]
+        public async Task<IActionResult> CreateMatch(MatchDto match)
         {
+            var newMatch = _mapper.Map<Match>(match);
+            _repo.Add(newMatch);
+            if (await _repo.Save())
+            {
+                return Ok();
+            }
+            return BadRequest();
         }
 
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpPost("score")]
+        [AllowAnonymous]
+        public async Task<IActionResult> UpdateScore(ScoreDto score)
         {
+            var newscore = _mapper.Map<TempScore>(score);
+
+            if (await _scoring.HasRecord(newscore))
+            {
+                if (await _scoring.UpdateScore(newscore))
+                {
+                    _repo.Add(newscore);
+
+                    if (await _repo.Save())
+                    {
+                        return Ok();
+                    }
+                    return BadRequest();
+                }
+                return BadRequest();
+            }
+            else
+            {
+                newscore.NoOfConfirmation += 1;
+
+                _repo.Add(newscore);
+
+                if (await _repo.Save())
+                {
+                    return Ok();
+                }
+
+                return BadRequest();
+            }
         }
+
+
+
     }
 }

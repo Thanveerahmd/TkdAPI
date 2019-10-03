@@ -12,7 +12,7 @@ namespace TkdScoringApp.API.Data
         public DbSet<Player> Player { get; set; }
         public DbSet<Match> Match { get; set; }
         public DbSet<TempScore> TempScore { get; set; }
-        public DbSet<Push> push { get; set; }
+        public DbSet<Punch> punch { get; set; }
         public DbSet<KickBody> kickbody { get; set; }
         public DbSet<Kickhead> kickhead { get; set; }
         public DbSet<TurningKickBody> turningKickBody { get; set; }

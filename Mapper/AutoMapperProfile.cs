@@ -1,6 +1,7 @@
 using AutoMapper;
 using TkdScoringApp.API.Dto;
 using TkdScoringApp.API.Entities;
+using TkdAPI.Entities;
 
 namespace TkdScoringApp.API.Mapper
 {
@@ -12,6 +13,9 @@ namespace TkdScoringApp.API.Mapper
             CreateMap<Judge, JudgeDto>();
             CreateMap<Player, PlayerDto>();
             CreateMap<Match, MatchDto>();
+
+            CreateMap<Kickhead, ScoreDto>();
+            CreateMap<ScoreDto, Kickhead>();
 
         }
     }

@@ -9,6 +9,6 @@ namespace TkdScoringApp.API.iService
         Task<bool> HasRecord(TempScore score,string type);
         void UpdateFoul(int PlayerId, int foul);
         Task<Match> GetMatch(int id);
-        Task<Kickhead> UpdateKickhead(Kickhead score);
+        Task<TempScore> UpdateScore(TempScore score);
     }
 }

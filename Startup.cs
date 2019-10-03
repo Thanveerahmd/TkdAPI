@@ -40,6 +40,7 @@ namespace TkdScoringApp.API
 
             services.AddScoped<iScoring, Scoring>();
             services.AddScoped<iTkdRepo, TkdRepo>();
+            services.AddScoped<iUser, UserService>();
 
         }
 

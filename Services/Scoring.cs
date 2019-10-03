@@ -23,7 +23,7 @@ namespace TkdScoringApp.API.Services
             _repo = repo;
             _user = user;
         }
-       
+
 
         public async Task<Match> GetMatch(int id)
         {
@@ -62,12 +62,41 @@ namespace TkdScoringApp.API.Services
             return true;
         }
 
-        public async Task<Kickhead> UpdateKickhead(Kickhead score)
+        public async Task<TempScore> UpdateScore(TempScore score)
         {
-            var tempScore = _context.kickhead
-               .Where(p => p.MatchId == score.MatchId)
-               .LastOrDefault(p => p.PlayerId == score.PlayerId);
+            var tempScore = new TempScore();
 
+            switch (score.Score)
+            {
+                case 1:
+                    tempScore = _context.push
+                  .Where(p => p.MatchId == score.MatchId)
+                  .LastOrDefault(p => p.PlayerId == score.PlayerId);
+                    break;
+                case 2:
+                    tempScore = _context.kickbody
+                     .Where(p => p.MatchId == score.MatchId)
+                     .LastOrDefault(p => p.PlayerId == score.PlayerId);
+                    break;
+                case 3:
+                    tempScore = _context.kickhead
+                     .Where(p => p.MatchId == score.MatchId)
+                     .LastOrDefault(p => p.PlayerId == score.PlayerId);
+                    break;
+                case 4:
+                    tempScore = _context.turningKickBody
+                     .Where(p => p.MatchId == score.MatchId)
+                     .LastOrDefault(p => p.PlayerId == score.PlayerId);
+                    break;
+                case 5:
+                    tempScore = _context.turningKickHead
+                     .Where(p => p.MatchId == score.MatchId)
+                     .LastOrDefault(p => p.PlayerId == score.PlayerId);
+                    break;
+                default:
+                    throw new AppException("Score is not Valid");
+            }
+    
             var match = await GetMatch(score.MatchId);
 
             if ((tempScore.NoOfConfirmation + 1) == match.NoOfJudges)
@@ -94,13 +123,13 @@ namespace TkdScoringApp.API.Services
 
                         newscore.MatchId = tempScore.MatchId;
                         newscore.PlayerId = tempScore.PlayerId;
-                        newscore.ScoreValue = 3;
+                        newscore.ScoreValue = score.Score;
 
                         _repo.Add(newscore);
 
                         var player = await _user.GetPlayer(score.PlayerId);
-                        player.Totalscore += 3;
-                         _context.Player.Update(player);
+                        player.Totalscore += score.Score;
+                        _context.Player.Update(player);
 
                         if (await _repo.Save())
                         {
@@ -118,9 +147,6 @@ namespace TkdScoringApp.API.Services
             return null;
         }
 
-        public Task<bool> UpdateScore(TempScore score)
-        {
-            throw new NotImplementedException();
-        }
+       
     }
 }

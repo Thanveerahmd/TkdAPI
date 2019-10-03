@@ -160,7 +160,7 @@ namespace TkdScoringApp.API.Services
 
             int formula = (match.NoOfJudges / 2) + 1;
 
-            if (time < 300000000)
+            if (time < 3)
             {
                 if (tempScore.JudgeId != score.JudgeId)
                 {

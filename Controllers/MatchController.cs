@@ -50,11 +50,12 @@ namespace TkdScoringApp.API.Controllers
 
             if (await _scoring.HasRecord(newscore))
             {
-                var updatescore = await _scoring.UpdateKickhead(newscore);
+                var updatescore = await _scoring.UpdateScore(newscore);
 
                 if (updatescore != null)
                 {
-                    _repo.Add(updatescore);
+                    newscore.NoOfConfirmation = updatescore.NoOfConfirmation;
+                    _repo.Add(newscore);
                     return Ok();
                 }
                 return BadRequest();

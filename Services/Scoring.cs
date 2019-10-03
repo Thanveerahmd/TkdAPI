@@ -26,7 +26,7 @@ namespace TkdScoringApp.API.Services
 
         public async Task<Match> GetMatch(int id)
         {
-            return await _context.Match.FindAsync(id);
+            return await _context.Match.Include(p => p.Players).Include(p => p.Judges).FirstAsync(p => p.Id == id);
         }
 
         public async void UpdateFoul(int PlayerId, int foul)
@@ -58,7 +58,7 @@ namespace TkdScoringApp.API.Services
                         else
                             return false;
                     }
-                
+
                 case 2:
                     {
                         var info = await _context.kickbody
@@ -108,8 +108,8 @@ namespace TkdScoringApp.API.Services
                             return false;
                     }
                 default:
-                       throw new AppException("Score is not Valid");                     
-            }       
+                    throw new AppException("Score is not Valid");
+            }
         }
 
         public async Task<TempScore> UpdateScore(TempScore score)
@@ -189,6 +189,12 @@ namespace TkdScoringApp.API.Services
                         {
                             throw new AppException("Score is not saved");
                         }
+
+                    }
+                    else
+                    {
+                        score.NoOfConfirmation = tempScore.NoOfConfirmation + 1;
+                        return score;
 
                     }
                 }

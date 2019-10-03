@@ -8,6 +8,10 @@ namespace TkdScoringApp.API.Dto
         public string Name { get; set; }
         public int matchId { get; set; }
         public DateTime LoginTime { get; set; }
+
+        public JudgeDto(){
+            LoginTime =  DateTime.UtcNow;
+        }
     }
 }
 

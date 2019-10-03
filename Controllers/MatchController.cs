@@ -56,9 +56,14 @@ namespace TkdScoringApp.API.Controllers
                 {
                     newscore.NoOfConfirmation = updatescore.NoOfConfirmation;
                     _repo.Add(newscore);
-                    return Ok();
+                    if (await _repo.Save())
+                    {
+                        return Ok();
+                    }
+
+                    return BadRequest();
                 }
-                return BadRequest();               
+                return BadRequest();
             }
             else
             {
@@ -74,8 +79,8 @@ namespace TkdScoringApp.API.Controllers
                 return BadRequest();
             }
         }
-  
-        [HttpPost("Kickbody")]
+
+        [HttpPost("kickbody")]
         [AllowAnonymous]
         public async Task<IActionResult> UpdateKickbody(ScoreDto score)
         {
@@ -91,7 +96,7 @@ namespace TkdScoringApp.API.Controllers
                     _repo.Add(newscore);
                     return Ok();
                 }
-                return BadRequest();               
+                return BadRequest();
             }
             else
             {
@@ -108,7 +113,7 @@ namespace TkdScoringApp.API.Controllers
             }
         }
 
-         [HttpPost("punch")]
+        [HttpPost("punch")]
         [AllowAnonymous]
         public async Task<IActionResult> UpdatePunch(ScoreDto score)
         {
@@ -124,7 +129,7 @@ namespace TkdScoringApp.API.Controllers
                     _repo.Add(newscore);
                     return Ok();
                 }
-                return BadRequest();               
+                return BadRequest();
             }
             else
             {
@@ -136,12 +141,12 @@ namespace TkdScoringApp.API.Controllers
                 {
                     return Ok();
                 }
-                
+
                 return BadRequest();
             }
         }
 
-         [HttpPost("turningkickbody")]
+        [HttpPost("turningkickbody")]
         [AllowAnonymous]
         public async Task<IActionResult> UpdateTurningKickbody(ScoreDto score)
         {
@@ -157,7 +162,7 @@ namespace TkdScoringApp.API.Controllers
                     _repo.Add(newscore);
                     return Ok();
                 }
-                return BadRequest();               
+                return BadRequest();
             }
             else
             {
@@ -169,12 +174,12 @@ namespace TkdScoringApp.API.Controllers
                 {
                     return Ok();
                 }
-                
+
                 return BadRequest();
             }
         }
 
-         [HttpPost("turningKickhead")]
+        [HttpPost("turningkickhead")]
         [AllowAnonymous]
         public async Task<IActionResult> UpdateTurningKickHead(ScoreDto score)
         {
@@ -190,7 +195,7 @@ namespace TkdScoringApp.API.Controllers
                     _repo.Add(newscore);
                     return Ok();
                 }
-                return BadRequest();               
+                return BadRequest();
             }
             else
             {
@@ -202,7 +207,7 @@ namespace TkdScoringApp.API.Controllers
                 {
                     return Ok();
                 }
-                
+
                 return BadRequest();
             }
         }

@@ -42,36 +42,11 @@ namespace TkdScoringApp.API.Services
             _context.Player.Update(user);
         }
 
-        public async Task<bool> HasRecord(TempScore score, string type)
+        public async Task<bool> HasRecord(TempScore score)
         {
-
-            switch (type.ToLower())
+            switch (score.Score)
             {
-                case ("kickhead"):
-                    {
-                        var info = await _context.kickhead
-                        .Where(p => p.MatchId == score.MatchId)
-                        .Where(p => p.PlayerId == score.PlayerId)
-                        .ToListAsync();
-
-                        if (info.Count != 0)
-                            return true;
-                        else
-                            return false;
-                    }
-                case ("kickbody"):
-                    {
-                        var info = await _context.kickbody
-                        .Where(p => p.MatchId == score.MatchId)
-                        .Where(p => p.PlayerId == score.PlayerId)
-                        .ToListAsync();
-
-                        if (info.Count != 0)
-                            return true;
-                        else
-                            return false;
-                    }
-                case ("punch"):
+                case 1:
                     {
                         var info = await _context.punch
                         .Where(p => p.MatchId == score.MatchId)
@@ -83,7 +58,32 @@ namespace TkdScoringApp.API.Services
                         else
                             return false;
                     }
-                case ("turningkickbody"):
+                
+                case 2:
+                    {
+                        var info = await _context.kickbody
+                        .Where(p => p.MatchId == score.MatchId)
+                        .Where(p => p.PlayerId == score.PlayerId)
+                        .ToListAsync();
+
+                        if (info.Count != 0)
+                            return true;
+                        else
+                            return false;
+                    }
+                case 3:
+                    {
+                        var info = await _context.kickhead
+                        .Where(p => p.MatchId == score.MatchId)
+                        .Where(p => p.PlayerId == score.PlayerId)
+                        .ToListAsync();
+
+                        if (info.Count != 0)
+                            return true;
+                        else
+                            return false;
+                    }
+                case 4:
                     {
                         var info = await _context.turningKickBody
                         .Where(p => p.MatchId == score.MatchId)
@@ -95,7 +95,7 @@ namespace TkdScoringApp.API.Services
                         else
                             return false;
                     }
-                case ("turningkickhead"):
+                case 5:
                     {
                         var info = await _context.turningKickHead
                         .Where(p => p.MatchId == score.MatchId)
@@ -107,10 +107,9 @@ namespace TkdScoringApp.API.Services
                         else
                             return false;
                     }
-            }
-
-            return false;
-
+                default:
+                       throw new AppException("Score is not Valid");                     
+            }       
         }
 
         public async Task<TempScore> UpdateScore(TempScore score)

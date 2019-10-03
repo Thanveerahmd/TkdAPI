@@ -29,7 +29,7 @@ namespace TkdScoringApp.API.Controllers
 
         }
 
-        [HttpPost]
+        [HttpPost("create")]
         [AllowAnonymous]
         public async Task<IActionResult> CreateMatch(MatchDto match)
         {
@@ -48,7 +48,7 @@ namespace TkdScoringApp.API.Controllers
         {
             var newscore = _mapper.Map<Kickhead>(score);
 
-            if (await _scoring.HasRecord(newscore,"kickhead"))
+            if (await _scoring.HasRecord(newscore))
             {
                 var updatescore = await _scoring.UpdateScore(newscore);
 
@@ -58,18 +58,40 @@ namespace TkdScoringApp.API.Controllers
                     _repo.Add(newscore);
                     return Ok();
                 }
+                return BadRequest();               
+            }
+            else
+            {
+                newscore.NoOfConfirmation += 1;
+
+                _repo.Add(newscore);
+
+                if (await _repo.Save())
+                {
+                    return Ok();
+                }
+
                 return BadRequest();
-                // if (await _scoring.UpdateScore(newscore))
-                // {
-                //     _repo.Add(newscore);
+            }
+        }
+  
+        [HttpPost("Kickbody")]
+        [AllowAnonymous]
+        public async Task<IActionResult> UpdateKickbody(ScoreDto score)
+        {
+            var newscore = _mapper.Map<KickBody>(score);
 
-                //     if (await _repo.Save())
-                //     {
-                //         return Ok();
-                //     }
-                //     return BadRequest();
-                // }
+            if (await _scoring.HasRecord(newscore))
+            {
+                var updatescore = await _scoring.UpdateScore(newscore);
 
+                if (updatescore != null)
+                {
+                    newscore.NoOfConfirmation = updatescore.NoOfConfirmation;
+                    _repo.Add(newscore);
+                    return Ok();
+                }
+                return BadRequest();               
             }
             else
             {
@@ -86,7 +108,103 @@ namespace TkdScoringApp.API.Controllers
             }
         }
 
+         [HttpPost("punch")]
+        [AllowAnonymous]
+        public async Task<IActionResult> UpdatePunch(ScoreDto score)
+        {
+            var newscore = _mapper.Map<Punch>(score);
 
+            if (await _scoring.HasRecord(newscore))
+            {
+                var updatescore = await _scoring.UpdateScore(newscore);
 
+                if (updatescore != null)
+                {
+                    newscore.NoOfConfirmation = updatescore.NoOfConfirmation;
+                    _repo.Add(newscore);
+                    return Ok();
+                }
+                return BadRequest();               
+            }
+            else
+            {
+                newscore.NoOfConfirmation += 1;
+
+                _repo.Add(newscore);
+
+                if (await _repo.Save())
+                {
+                    return Ok();
+                }
+                
+                return BadRequest();
+            }
+        }
+
+         [HttpPost("turningkickbody")]
+        [AllowAnonymous]
+        public async Task<IActionResult> UpdateTurningKickbody(ScoreDto score)
+        {
+            var newscore = _mapper.Map<TurningKickBody>(score);
+
+            if (await _scoring.HasRecord(newscore))
+            {
+                var updatescore = await _scoring.UpdateScore(newscore);
+
+                if (updatescore != null)
+                {
+                    newscore.NoOfConfirmation = updatescore.NoOfConfirmation;
+                    _repo.Add(newscore);
+                    return Ok();
+                }
+                return BadRequest();               
+            }
+            else
+            {
+                newscore.NoOfConfirmation += 1;
+
+                _repo.Add(newscore);
+
+                if (await _repo.Save())
+                {
+                    return Ok();
+                }
+                
+                return BadRequest();
+            }
+        }
+
+         [HttpPost("turningKickhead")]
+        [AllowAnonymous]
+        public async Task<IActionResult> UpdateTurningKickHead(ScoreDto score)
+        {
+            var newscore = _mapper.Map<TurningKickHead>(score);
+
+            if (await _scoring.HasRecord(newscore))
+            {
+                var updatescore = await _scoring.UpdateScore(newscore);
+
+                if (updatescore != null)
+                {
+                    newscore.NoOfConfirmation = updatescore.NoOfConfirmation;
+                    _repo.Add(newscore);
+                    return Ok();
+                }
+                return BadRequest();               
+            }
+            else
+            {
+                newscore.NoOfConfirmation += 1;
+
+                _repo.Add(newscore);
+
+                if (await _repo.Save())
+                {
+                    return Ok();
+                }
+                
+                return BadRequest();
+            }
+        }
     }
 }

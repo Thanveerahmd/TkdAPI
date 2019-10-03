@@ -11,12 +11,10 @@ namespace TkdScoringApp.API.Data
         public DbSet<Judge> Judge { get; set; }
         public DbSet<Player> Player { get; set; }
         public DbSet<Match> Match { get; set; }
-        public DbSet<TempScore> TempScore { get; set; }
         public DbSet<Punch> punch { get; set; }
         public DbSet<KickBody> kickbody { get; set; }
         public DbSet<Kickhead> kickhead { get; set; }
         public DbSet<TurningKickBody> turningKickBody { get; set; }
         public DbSet<TurningKickHead> turningKickHead { get; set; }
-
     }
 }

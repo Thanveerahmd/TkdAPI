@@ -15,14 +15,17 @@ namespace TkdScoringApp.API.Controllers
     {
         private readonly IMapper _mapper;
         private readonly iTkdRepo _repo;
+        private readonly  iScoring _score;
 
         public UserController(
              IMapper mapper,
-             iTkdRepo repo
+             iTkdRepo repo,
+             iScoring score
              )
         {
             _repo = repo;
             _mapper = mapper;
+            _score = score;
         }
 
         [HttpPost("admin")]
@@ -40,11 +43,22 @@ namespace TkdScoringApp.API.Controllers
             return BadRequest();
         }
 
-        [HttpPost("judge")]
+        [HttpPost("judge/{matchId}")]
         [AllowAnonymous]
-        public  async Task<IActionResult> AddJudge(JudgeDto judge)
+        public  async Task<IActionResult> AddJudge(JudgeDto judge,int matchId)
         {
             var judgeUser = _mapper.Map<Judge>(judge);
+
+            var match  =await _score.GetMatch(matchId);
+
+            if (match == null)
+            {
+                return BadRequest(new { message = "There is No such match" });
+
+            }
+
+            match.Judges.Add(judgeUser);
+
             _repo.Add(judgeUser);
 
             if (await _repo.Save())
@@ -55,11 +69,21 @@ namespace TkdScoringApp.API.Controllers
             return BadRequest();
         }
 
-        [HttpPost("player")]
+        [HttpPost("player/{matchId}")]
         [AllowAnonymous]
-        public  async Task<IActionResult> AddPlayer(PlayerDto player)
+        public  async Task<IActionResult> AddPlayer(PlayerDto player,int matchId)
         {
             var playerUser = _mapper.Map<Player>(player);
+
+            var match  =await _score.GetMatch(matchId);
+
+            if (match == null)
+            {
+                return BadRequest(new { message = "There is No such match" });
+
+            }
+            
+            match.Players.Add(playerUser);
             
             _repo.Add(playerUser);
 

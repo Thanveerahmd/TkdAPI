@@ -29,7 +29,7 @@ namespace TkdScoringApp.API.Controllers
 
         }
 
-        [HttpPost("match")]
+        [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> CreateMatch(MatchDto match)
         {
@@ -48,7 +48,7 @@ namespace TkdScoringApp.API.Controllers
         {
             var newscore = _mapper.Map<Kickhead>(score);
 
-            if (await _scoring.HasRecord(newscore))
+            if (await _scoring.HasRecord(newscore,"kickhead"))
             {
                 var updatescore = await _scoring.UpdateKickhead(newscore);
 

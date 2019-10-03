@@ -7,6 +7,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System;
 using TkdAPI.Entities;
+using System.Reflection;
 
 namespace TkdScoringApp.API.Services
 {
@@ -42,18 +43,23 @@ namespace TkdScoringApp.API.Services
             _context.Player.Update(user);
         }
 
-        public async Task<bool> HasRecord(Kickhead score)
+        public async Task<bool> HasRecord(TempScore score,string type)
         {
 
-            var info = await _context.kickhead
-            .Where(p => p.MatchId == score.MatchId)
-            .Where(p => p.PlayerId == score.PlayerId)
-            .ToListAsync();
+            PropertyInfo prop = typeof(DataContext).GetProperty(type);
+            var context = prop.GetValue(_context);
 
-            if (info.Count != 0)
-                return true;
-            else
-                return false;
+            // var info = await _context.kickhead
+            // .Where(p => p.MatchId == score.MatchId)
+            // .Where(p => p.PlayerId == score.PlayerId)
+            // .ToListAsync();
+
+            // if (info.Count != 0)
+            //     return true;
+            // else
+            //     return false;
+
+            return true;
         }
 
         public async Task<Kickhead> UpdateKickhead(Kickhead score)
@@ -81,7 +87,7 @@ namespace TkdScoringApp.API.Services
                 {
                     if ((tempScore.NoOfConfirmation + 1) == formula)
                     {
-                        //add singnalR
+                        //add signalR
 
                         score.NoOfConfirmation = tempScore.NoOfConfirmation + 1;
                         var newscore = new Score();

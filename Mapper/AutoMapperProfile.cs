@@ -9,10 +9,17 @@ namespace TkdScoringApp.API.Mapper
     {
         public AutoMapperProfile()
         {
+            CreateMap<AdminDto, Admin>();
             CreateMap<Admin, AdminDto>();
+
+            CreateMap<JudgeDto, Judge>();
             CreateMap<Judge, JudgeDto>();
+
             CreateMap<Player, PlayerDto>();
+            CreateMap<PlayerDto, Player>();
+
             CreateMap<Match, MatchDto>();
+            CreateMap<MatchDto, Match>();
 
             CreateMap<Kickhead, ScoreDto>();
             CreateMap<ScoreDto, Kickhead>();

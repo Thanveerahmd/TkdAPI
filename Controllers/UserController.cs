@@ -49,7 +49,9 @@ namespace TkdScoringApp.API.Controllers
         {
             var judgeUser = _mapper.Map<Judge>(judge);
 
-            var match  =await _score.GetMatch(matchId);
+            var match  = await _score.GetMatch(matchId);
+
+            judgeUser.MatchId = matchId;
 
             if (match == null)
             {
@@ -57,9 +59,14 @@ namespace TkdScoringApp.API.Controllers
 
             }
 
-            match.Judges.Add(judgeUser);
+            if( match.Judges.Count + 1 > match.NoOfJudges){
+                return BadRequest(new {message = "Already judge limit have been allocated for this match"});
+            }
 
             _repo.Add(judgeUser);
+            match.Judges.Add(judgeUser);
+
+            
 
             if (await _repo.Save())
             {
@@ -82,10 +89,15 @@ namespace TkdScoringApp.API.Controllers
                 return BadRequest(new { message = "There is No such match" });
 
             }
-            
-            match.Players.Add(playerUser);
+
+            if(match.Players.Count + 1 > 2){
+                return BadRequest(new {message = "Already 2 players have been allocated for this match"});
+            }
             
             _repo.Add(playerUser);
+
+            match.Players.Add(playerUser);
+            
 
             if (await _repo.Save())
             {

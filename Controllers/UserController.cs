@@ -43,19 +43,20 @@ namespace TkdScoringApp.API.Controllers
             return BadRequest();
         }
 
-        [HttpPost("judge/{matchId}")]
+        [HttpPost("judge")]
         [AllowAnonymous]
-        public  async Task<IActionResult> AddJudge(JudgeDto judge,int matchId)
+        public  async Task<IActionResult> AddJudge(JudgeDto judge)
         {
             var judgeUser = _mapper.Map<Judge>(judge);
 
-            var match  =await _score.GetMatch(matchId);
+            var match  =await _score.GetMatch(judgeUser.MatchId);
 
             if (match == null)
             {
                 return BadRequest(new { message = "There is No such match" });
 
             }
+
 
             match.Judges.Add(judgeUser);
 
@@ -69,13 +70,13 @@ namespace TkdScoringApp.API.Controllers
             return BadRequest();
         }
 
-        [HttpPost("player/{matchId}")]
+        [HttpPost("player")]
         [AllowAnonymous]
-        public  async Task<IActionResult> AddPlayer(PlayerDto player,int matchId)
+        public  async Task<IActionResult> AddPlayer(PlayerDto player)
         {
             var playerUser = _mapper.Map<Player>(player);
 
-            var match  =await _score.GetMatch(matchId);
+            var match  =await _score.GetMatch(playerUser.MatchId);
 
             if (match == null)
             {

@@ -6,6 +6,7 @@ using TkdScoringApp.API.iService;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System;
+using TkdAPI.Entities;
 
 namespace TkdScoringApp.API.Services
 {
@@ -21,10 +22,7 @@ namespace TkdScoringApp.API.Services
             _repo = repo;
             _user = user;
         }
-        public async Task<TempScore> GetTempScore(int id)
-        {
-            return await _context.TempScore.FindAsync(id);
-        }
+       
 
         public async Task<Match> GetMatch(int id)
         {
@@ -44,18 +42,31 @@ namespace TkdScoringApp.API.Services
             _context.Player.Update(user);
         }
 
-
-        public async Task<bool> UpdateScore(TempScore score)
+        public async Task<bool> HasRecord(Kickhead score)
         {
-            var tempScore = _context.TempScore
+
+            var info = await _context.kickhead
             .Where(p => p.MatchId == score.MatchId)
-            .LastOrDefault(p => p.PlayerId == score.PlayerId);
+            .Where(p => p.PlayerId == score.PlayerId)
+            .ToListAsync();
+
+            if (info.Count != 0)
+                return true;
+            else
+                return false;
+        }
+
+        public async Task<Kickhead> UpdateKickhead(Kickhead score)
+        {
+            var tempScore = _context.kickhead
+               .Where(p => p.MatchId == score.MatchId)
+               .LastOrDefault(p => p.PlayerId == score.PlayerId);
 
             var match = await GetMatch(score.MatchId);
 
             if ((tempScore.NoOfConfirmation + 1) == match.NoOfJudges)
             {
-                return true;
+                return null;
             }
 
             TimeSpan timeDiff = (score.time - tempScore.time);
@@ -70,29 +81,40 @@ namespace TkdScoringApp.API.Services
                 {
                     if ((tempScore.NoOfConfirmation + 1) == formula)
                     {
-                       //add singnalR
-                       //ADD Score entity
+                        //add singnalR
+
+                        score.NoOfConfirmation = tempScore.NoOfConfirmation + 1;
+                        var newscore = new Score();
+
+                        newscore.MatchId = tempScore.MatchId;
+                        newscore.PlayerId = tempScore.PlayerId;
+                        newscore.ScoreValue = 3;
+
+                        _repo.Add(newscore);
+
+                        var player = await _user.GetPlayer(score.PlayerId);
+                        player.Totalscore += 3;
+                         _context.Player.Update(player);
+
+                        if (await _repo.Save())
+                        {
+                            return score;
+                        }
+                        else
+                        {
+                            throw new AppException("Score is not saved");
+                        }
 
                     }
                 }
-                return true;
+                return null;
             }
-            return true;
+            return null;
         }
 
-        public async Task<bool> HasRecord(TempScore score)
+        public Task<bool> UpdateScore(TempScore score)
         {
-
-            var info = await _context.TempScore
-            .Where(p => p.MatchId == score.MatchId)
-            .Where(p => p.PlayerId == score.PlayerId)
-            .ToListAsync();
-
-            if (info.Count != 0)
-                return true;
-            else
-                return false;
+            throw new NotImplementedException();
         }
-
     }
 }

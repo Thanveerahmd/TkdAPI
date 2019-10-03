@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TkdAPI.Entities;
 using TkdScoringApp.API.Dto;
 using TkdScoringApp.API.Entities;
 using TkdScoringApp.API.iService;
@@ -41,25 +42,33 @@ namespace TkdScoringApp.API.Controllers
             return BadRequest();
         }
 
-        [HttpPost("score")]
+        [HttpPost("kickhead")]
         [AllowAnonymous]
-        public async Task<IActionResult> UpdateScore(ScoreDto score)
+        public async Task<IActionResult> UpdateKickHead(ScoreDto score)
         {
-            var newscore = _mapper.Map<TempScore>(score);
+            var newscore = _mapper.Map<Kickhead>(score);
 
             if (await _scoring.HasRecord(newscore))
             {
-                if (await _scoring.UpdateScore(newscore))
-                {
-                    _repo.Add(newscore);
+                var updatescore = await _scoring.UpdateKickhead(newscore);
 
-                    if (await _repo.Save())
-                    {
-                        return Ok();
-                    }
-                    return BadRequest();
+                if (updatescore != null)
+                {
+                    _repo.Add(updatescore);
+                    return Ok();
                 }
                 return BadRequest();
+                // if (await _scoring.UpdateScore(newscore))
+                // {
+                //     _repo.Add(newscore);
+
+                //     if (await _repo.Save())
+                //     {
+                //         return Ok();
+                //     }
+                //     return BadRequest();
+                // }
+
             }
             else
             {

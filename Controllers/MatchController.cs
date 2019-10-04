@@ -46,6 +46,7 @@ namespace TkdScoringApp.API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> UpdateKickHead(ScoreDto score)
         {
+
             var newscore = _mapper.Map<Kickhead>(score);
 
             if (await _scoring.HasRecord(newscore))
@@ -55,7 +56,9 @@ namespace TkdScoringApp.API.Controllers
                 if (updatescore != null)
                 {
                     newscore.NoOfConfirmation = updatescore.NoOfConfirmation;
+
                     _repo.Add(newscore);
+                    
                     if (await _repo.Save())
                     {
                         return Ok();

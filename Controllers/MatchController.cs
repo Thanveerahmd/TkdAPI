@@ -99,7 +99,7 @@ namespace TkdScoringApp.API.Controllers
                     _repo.Add(newscore);
                     return Ok();
                 }
-                return BadRequest();
+                return Ok();
             }
             else
             {

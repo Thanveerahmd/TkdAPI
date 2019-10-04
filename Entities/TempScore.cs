@@ -11,6 +11,6 @@ namespace TkdScoringApp.API.Entities
         public int PlayerId { get; set; }
         public int JudgeId { get; set; }
         public int NoOfConfirmation { get; set; }
-        public int NoOfClickIn3Sec { get; set; }
+        public int NoOfConsecutiveTaps { get; set; }
     }
 }

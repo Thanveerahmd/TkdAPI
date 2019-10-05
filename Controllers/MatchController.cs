@@ -34,6 +34,7 @@ namespace TkdScoringApp.API.Controllers
         public async Task<IActionResult> CreateMatch(MatchDto match)
         {
             var newMatch = _mapper.Map<Match>(match);
+            newMatch.isPause = true;
             _repo.Add(newMatch);
             if (await _repo.Save())
             {

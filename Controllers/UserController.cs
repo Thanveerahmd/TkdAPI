@@ -58,7 +58,11 @@ namespace TkdScoringApp.API.Controllers
                 if (judge.RingId != null)
                 {
                     match = await _score.GetMatchByRingId(judge.RingId);
-                    judge.matchId = match.Id;
+                    if (match == null)
+                    {
+                        return BadRequest(new { message = $"No Match Happening in Ring {judge.RingId}" });
+                    }
+                    judgeUser.id = match.Id;
                 }
                 else
                 {
@@ -77,13 +81,18 @@ namespace TkdScoringApp.API.Controllers
                 return BadRequest(new { message = "Already judge limit have been allocated for this match" });
             }
 
+
             _repo.Add(judgeUser);
             match.Judges.Add(judgeUser);
 
-
+            // return Ok(match);
 
             if (await _repo.Save())
             {
+                if (match.Judges.Count + 1 == match.NoOfJudges)
+                {
+                    //add signal R
+                }
                 return Ok(match);
             }
 

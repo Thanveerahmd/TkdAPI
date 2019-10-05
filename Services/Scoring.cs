@@ -26,12 +26,13 @@ namespace TkdScoringApp.API.Services
 
         public async Task<Match> GetMatch(int id)
         {
-            return await _context.Match.Include(p => p.Players).Include(p => p.Judges).FirstAsync(p => p.Id == id);
+            var data = await _context.Match.Include(p => p.Players).Include(p => p.Judges).FirstOrDefaultAsync(p => p.Id == id);
+            return data;
         }
 
          public  async Task<Match> GetMatchByRingId(string ringId)
         {
-            return await _context.Match.Include(p => p.Players).Include(p => p.Judges).FirstAsync(p => p.RingId == ringId && p.isFinished == false);
+            return await _context.Match.Include(p => p.Players).Include(p => p.Judges).FirstOrDefaultAsync(p => p.RingId == ringId && p.isFinished == false);
             
         }
 

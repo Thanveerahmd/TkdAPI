@@ -29,6 +29,12 @@ namespace TkdScoringApp.API.Services
             return await _context.Match.Include(p => p.Players).Include(p => p.Judges).FirstAsync(p => p.Id == id);
         }
 
+         public  async Task<Match> GetMatchByRingId(string ringId)
+        {
+            return await _context.Match.Include(p => p.Players).Include(p => p.Judges).FirstAsync(p => p.RingId == ringId && p.isFinished == false);
+            
+        }
+
         public async void UpdateFoul(int PlayerId, int foul)
         {
             var user = await _user.GetPlayer(PlayerId);
@@ -166,7 +172,7 @@ namespace TkdScoringApp.API.Services
             var time = Convert.ToInt32(timeDiff.TotalSeconds);
 
 
-            if (time < 3)
+            if (time < 10)
             {
                 switch (score.NoOfConsecutiveTaps)
                 {
@@ -318,5 +324,7 @@ namespace TkdScoringApp.API.Services
 
             }
         }
+
+       
     }
 }

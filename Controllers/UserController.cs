@@ -15,7 +15,7 @@ namespace TkdScoringApp.API.Controllers
     {
         private readonly IMapper _mapper;
         private readonly iTkdRepo _repo;
-        private readonly  iScoring _score;
+        private readonly iScoring _score;
 
         public UserController(
              IMapper mapper,
@@ -45,11 +45,26 @@ namespace TkdScoringApp.API.Controllers
 
         [HttpPost("judge")]
         [AllowAnonymous]
-        public  async Task<IActionResult> AddJudge(JudgeDto judge)
+        public async Task<IActionResult> AddJudge(JudgeDto judge)
         {
             var judgeUser = _mapper.Map<Judge>(judge);
-
-            var match  = await _score.GetMatch(judgeUser.MatchId);
+            var match = new Match();
+            if (judgeUser.MatchId != 0)
+            {
+                match = await _score.GetMatch(judgeUser.MatchId);
+            }
+            else
+            {
+                if (judge.RingId != null)
+                {
+                    match = await _score.GetMatchByRingId(judge.RingId);
+                    judge.matchId = match.Id;
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
 
             if (match == null)
             {
@@ -57,18 +72,19 @@ namespace TkdScoringApp.API.Controllers
 
             }
 
-            if( match.Judges.Count + 1 > match.NoOfJudges){
-                return BadRequest(new {message = "Already judge limit have been allocated for this match"});
+            if (match.Judges.Count + 1 > match.NoOfJudges)
+            {
+                return BadRequest(new { message = "Already judge limit have been allocated for this match" });
             }
 
             _repo.Add(judgeUser);
             match.Judges.Add(judgeUser);
 
-            
+
 
             if (await _repo.Save())
             {
-                return Ok();
+                return Ok(match);
             }
 
             return BadRequest();
@@ -76,11 +92,11 @@ namespace TkdScoringApp.API.Controllers
 
         [HttpPost("player")]
         [AllowAnonymous]
-        public  async Task<IActionResult> AddPlayer(PlayerDto player)
+        public async Task<IActionResult> AddPlayer(PlayerDto player)
         {
             var playerUser = _mapper.Map<Player>(player);
 
-            var match  =await _score.GetMatch(playerUser.MatchId);
+            var match = await _score.GetMatch(playerUser.MatchId);
 
             if (match == null)
             {
@@ -88,14 +104,15 @@ namespace TkdScoringApp.API.Controllers
 
             }
 
-            if(match.Players.Count + 1 > 2){
-                return BadRequest(new {message = "Already 2 players have been allocated for this match"});
+            if (match.Players.Count + 1 > 2)
+            {
+                return BadRequest(new { message = "Already 2 players have been allocated for this match" });
             }
-            
+
             _repo.Add(playerUser);
 
             match.Players.Add(playerUser);
-            
+
 
             if (await _repo.Save())
             {

@@ -6,6 +6,8 @@ namespace TkdScoringApp.API.Dto
     {
         public int Id { get; set; }
         public int AdminId { get; set; }
+
+        public string RingId {get;set;}
         public int NoOfJudges { get; set; }
 
     }

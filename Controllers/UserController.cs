@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using TkdScoringApp.API.Dto;
 using TkdScoringApp.API.Entities;
 using TkdScoringApp.API.iService;
+using Microsoft.AspNetCore.SignalR;
+
 
 namespace TkdScoringApp.API.Controllers
 {
@@ -17,15 +19,19 @@ namespace TkdScoringApp.API.Controllers
         private readonly iTkdRepo _repo;
         private readonly iScoring _score;
 
+        private IHubContext<ChartHub> _hub;
+
         public UserController(
              IMapper mapper,
              iTkdRepo repo,
-             iScoring score
+             iScoring score,
+             IHubContext<ChartHub> hub
              )
         {
             _repo = repo;
             _mapper = mapper;
             _score = score;
+            _hub = hub;
         }
 
         [HttpPost("admin")]
@@ -62,7 +68,7 @@ namespace TkdScoringApp.API.Controllers
                     {
                         return BadRequest(new { message = $"No Match Happening in Ring {judge.RingId}" });
                     }
-                    judgeUser.id = match.Id;
+                    judgeUser.MatchId = match.Id;
                 }
                 else
                 {
@@ -85,13 +91,13 @@ namespace TkdScoringApp.API.Controllers
             _repo.Add(judgeUser);
             match.Judges.Add(judgeUser);
 
-            // return Ok(match);
-
             if (await _repo.Save())
             {
-                if (match.Judges.Count + 1 == match.NoOfJudges)
+                if (match.Judges.Count == match.NoOfJudges)
                 {
                     //add signal R
+                    match.isPause = false;
+                    await _hub.Clients.All.SendAsync("transferData",new { matchStart = true});
                 }
                 return Ok(match);
             }

@@ -35,6 +35,9 @@ namespace TkdScoringApp.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors();
+
+            services.AddSignalR();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddDbContext<DataContext>(x => x.UseSqlServer(Configuration.GetConnectionString("TkdDatabase")));
             services.AddAutoMapper();
@@ -74,12 +77,20 @@ namespace TkdScoringApp.API
             }
 
             // app.UseHttpsRedirection();
+
             app.UseCors(x => x
-                .AllowAnyOrigin()
+                .WithOrigins("http://localhost:8100")
                 .AllowAnyMethod()
-                .AllowAnyHeader());
+                .AllowAnyHeader()
+                .AllowCredentials());
+
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<ChartHub>("/live");
+            });
+
             app.UseMvc();
-            
+
         }
     }
 }

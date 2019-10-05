@@ -37,7 +37,7 @@ namespace TkdScoringApp.API.Controllers
             _repo.Add(newMatch);
             if (await _repo.Save())
             {
-                return Ok();
+                return Ok(newMatch);
             }
             return BadRequest();
         }

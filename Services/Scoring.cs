@@ -166,7 +166,7 @@ namespace TkdScoringApp.API.Services
             var time = Convert.ToInt32(timeDiff.TotalSeconds);
 
 
-            if (time < 3)
+            if (time < 10)
             {
                 switch (score.NoOfConsecutiveTaps)
                 {

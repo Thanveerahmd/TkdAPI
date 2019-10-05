@@ -66,7 +66,7 @@ namespace TkdScoringApp.API.Controllers
 
                     return BadRequest();
                 }
-                return BadRequest();
+                return Ok();
             }
             else
             {

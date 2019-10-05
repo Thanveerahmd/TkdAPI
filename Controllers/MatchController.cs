@@ -58,7 +58,7 @@ namespace TkdScoringApp.API.Controllers
                     newscore.NoOfConfirmation = updatescore.NoOfConfirmation;
 
                     _repo.Add(newscore);
-                    
+
                     if (await _repo.Save())
                     {
                         return Ok();
@@ -66,7 +66,7 @@ namespace TkdScoringApp.API.Controllers
 
                     return BadRequest();
                 }
-                return BadRequest();
+                return Ok();
             }
             else
             {
@@ -132,7 +132,7 @@ namespace TkdScoringApp.API.Controllers
                     _repo.Add(newscore);
                     return Ok();
                 }
-                return BadRequest();
+                return Ok();
             }
             else
             {
@@ -165,7 +165,7 @@ namespace TkdScoringApp.API.Controllers
                     _repo.Add(newscore);
                     return Ok();
                 }
-                return BadRequest();
+                return Ok();
             }
             else
             {
@@ -198,7 +198,7 @@ namespace TkdScoringApp.API.Controllers
                     _repo.Add(newscore);
                     return Ok();
                 }
-                return BadRequest();
+                return Ok();
             }
             else
             {

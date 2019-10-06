@@ -30,10 +30,10 @@ namespace TkdScoringApp.API.Services
             return data;
         }
 
-         public  async Task<Match> GetMatchByRingId(string ringId)
+        public async Task<Match> GetMatchByRingId(string ringId)
         {
             return await _context.Match.Include(p => p.Players).Include(p => p.Judges).FirstOrDefaultAsync(p => p.RingId == ringId && p.isFinished == false);
-            
+
         }
 
         public async void UpdateFoul(int PlayerId, int foul)
@@ -168,12 +168,20 @@ namespace TkdScoringApp.API.Services
                 return null;
             }
 
+            if ((score.NoOfConsecutiveTaps == tempScore.NoOfConsecutiveTaps) && (score.JudgeId == tempScore.JudgeId))
+            {
+                if (await DeleteRelevantRecords(tempScore))
+                {
+                    score.NoOfConfirmation += 1;
+                    return score;
+                }
+            }
+
             TimeSpan timeDiff = (score.time - tempScore.time);
 
             var time = Convert.ToInt32(timeDiff.TotalSeconds);
 
-
-            if (time < 10)
+            if (time < 5)
             {
                 switch (score.NoOfConsecutiveTaps)
                 {
@@ -188,11 +196,11 @@ namespace TkdScoringApp.API.Services
                 }
             }
 
-            _repo.Delete(tempScore);
-            
-            if (await _repo.Save())
+
+            if (await DeleteRelevantRecords(tempScore))
             {
-                return null;
+                score.NoOfConfirmation += 1;
+                return score;
             }
 
             throw new AppException("Entity is not delete properly");
@@ -326,6 +334,6 @@ namespace TkdScoringApp.API.Services
             }
         }
 
-       
+
     }
 }

@@ -12,6 +12,9 @@ namespace TkdScoringApp.API.Mapper
             CreateMap<AdminDto, Admin>();
             CreateMap<Admin, AdminDto>();
 
+            CreateMap<AdminTokenReturnDto, Admin>();
+            CreateMap<Admin, AdminTokenReturnDto>();
+
             CreateMap<JudgeDto, Judge>();
             CreateMap<Judge, JudgeDto>();
 

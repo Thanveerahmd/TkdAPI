@@ -6,7 +6,7 @@ using TkdScoringApp.API.Dto;
 using TkdScoringApp.API.Entities;
 using TkdScoringApp.API.iService;
 using Microsoft.AspNetCore.SignalR;
-
+using TkdScoringApp.API.Helpers;
 
 namespace TkdScoringApp.API.Controllers
 {
@@ -19,34 +19,78 @@ namespace TkdScoringApp.API.Controllers
         private readonly iTkdRepo _repo;
         private readonly iScoring _score;
 
+        private readonly iUser _user;
+
         private IHubContext<ChartHub> _hub;
 
         public UserController(
              IMapper mapper,
              iTkdRepo repo,
              iScoring score,
-             IHubContext<ChartHub> hub
+             IHubContext<ChartHub> hub,
+             iUser user
              )
         {
             _repo = repo;
             _mapper = mapper;
             _score = score;
             _hub = hub;
+            _user = user;
         }
 
-        [HttpPost("admin")]
+        [HttpPost("admin/signup")]
         [AllowAnonymous]
         public async Task<IActionResult> AddAdmin(AdminDto admin)
         {
             var adminUser = _mapper.Map<Admin>(admin);
-            _repo.Add(adminUser);
 
-            if (await _repo.Save())
+            var adminDatabaseRecord = await _user.GetAdminByUsername(adminUser.Username);
+            if (adminDatabaseRecord == null)
             {
-                return Ok();
+                _repo.Add(adminUser);
+
+                if (await _repo.Save())
+                {
+                    return await AdminLogin(admin);
+                }
+                return BadRequest();
             }
 
-            return BadRequest();
+            return BadRequest(new { message = "Username not found" });
+        }
+
+        [HttpGet("admin/signup/{username}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> CheckAdminUsername(string username)
+        {
+
+            var adminDatabaseRecord = await _user.GetAdminByUsername(username);
+            if (adminDatabaseRecord == null)
+            {
+                return Ok(new { recordFound = false });
+            }
+            return Ok(new { recordFound = true });
+
+        }
+
+        [HttpPost("admin/login")]
+        [AllowAnonymous]
+        public async Task<IActionResult> AdminLogin(AdminDto admin)
+        {
+            var adminUser = _mapper.Map<Admin>(admin);
+
+            var adminDatabaseRecord = await _user.GetAdminByUsername(adminUser.Username);
+
+            if (adminDatabaseRecord == null)
+            {
+                return BadRequest(new { message = "Admin Username not found" });
+            }
+
+            var token = Extension.OTPCharacters("10");
+            var dataReturn = _mapper.Map<AdminTokenReturnDto>(adminDatabaseRecord);
+            dataReturn.Token = token;
+            return Ok(dataReturn);
+
         }
 
         [HttpPost("judge")]
@@ -97,7 +141,7 @@ namespace TkdScoringApp.API.Controllers
                 {
                     //add signal R
                     match.isPause = false;
-                    await _hub.Clients.All.SendAsync("transferData",new { matchStart = true});
+                    await _hub.Clients.All.SendAsync("transferData", new { matchStart = true });
                 }
                 return Ok(match);
             }

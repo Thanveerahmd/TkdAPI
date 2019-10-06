@@ -79,7 +79,8 @@ namespace TkdScoringApp.API
             // app.UseHttpsRedirection();
 
             app.UseCors(x => x
-                .WithOrigins("http://localhost:8100")
+                // .WithOrigins("http://localhost:8100")
+                .SetIsOriginAllowed(_ => true)
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials());

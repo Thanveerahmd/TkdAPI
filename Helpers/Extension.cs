@@ -13,9 +13,9 @@ namespace TkdScoringApp.API.Helpers
 
         }
 
-        public static string OTPCharacters()
+        public static string OTPCharacters(string MaxLength)
         {
-            string OTPLength = "6";
+            string OTPLength = MaxLength;
 
             string NewCharacters = "";
 

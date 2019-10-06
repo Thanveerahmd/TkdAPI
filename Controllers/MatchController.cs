@@ -35,6 +35,10 @@ namespace TkdScoringApp.API.Controllers
         {
             var newMatch = _mapper.Map<Match>(match);
             newMatch.isPause = true;
+            var ringAvailability = await _repo.checkWhetherRingAvailable(match.RingId);
+            if(ringAvailability != null){
+                return BadRequest(new { message = "Selected Ring Not Available"});
+            }
             _repo.Add(newMatch);
             if (await _repo.Save())
             {

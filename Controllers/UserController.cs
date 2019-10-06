@@ -175,7 +175,7 @@ namespace TkdScoringApp.API.Controllers
 
             if (await _repo.Save())
             {
-                return Ok();
+                return Ok(playerUser);
             }
 
             return BadRequest();

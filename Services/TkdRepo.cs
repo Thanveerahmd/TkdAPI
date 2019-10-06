@@ -1,7 +1,12 @@
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using TkdScoringApp.API.Data;
+using TkdScoringApp.API.Entities;
+using TkdScoringApp.API.Helpers;
 using TkdScoringApp.API.iService;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 
 namespace TkdScoringApp.API.Services
 {
@@ -42,5 +47,9 @@ namespace TkdScoringApp.API.Services
             return await _context.SaveChangesAsync() > 0;
         }
 
+        public async Task<Match> checkWhetherRingAvailable(string ring)
+        {
+            return await _context.Match.FirstOrDefaultAsync(p => p.RingId == ring && p.isFinished == false);
+        }
     }
 }

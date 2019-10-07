@@ -138,12 +138,6 @@ namespace TkdScoringApp.API.Controllers
             if (await _repo.Save())
             {
                 await _hub.Clients.All.SendAsync("judgeJoinUpdate", judgeUser);
-
-                if (match.Judges.Count == match.NoOfJudges)
-                {
-                    match.isPause = false;
-                    await _hub.Clients.All.SendAsync("transferData", new { matchStart = true });
-                }
                 return Ok(match);
             }
 

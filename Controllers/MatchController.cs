@@ -53,6 +53,49 @@ namespace TkdScoringApp.API.Controllers
             return BadRequest();
         }
 
+        [HttpPost("status/{status}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ModifyMatchStatus(string status, MatchDto match)
+        {
+            var newMatch = _mapper.Map<Match>(match);
+            var matchRecord = await _repo.GetMatch(newMatch.Id);
+            var obj = new { matchStart = true,matchBreak=false };
+            if (status == "start" || status == "resume")
+            {
+                matchRecord.isPause = false;
+            }
+            else
+            {
+                if (status == "pause")
+                {
+                    matchRecord.isPause = true;
+                    obj = new { matchStart = false,matchBreak=false };
+                }
+                else
+                {
+                    if (status == "break")
+                    {
+                        matchRecord.isPause = true;
+                        obj = new { matchStart = false,matchBreak = true };
+                    }else{
+                    return BadRequest(new { message = "Status not found" });
+                    }
+                }
+            }
+
+
+
+            _repo.updateMatch(matchRecord);
+
+
+            if (await _repo.Save())
+            {
+                await _hub.Clients.All.SendAsync("transferData", obj);
+                return Ok();
+            }
+            return BadRequest();
+        }
+
         [HttpPost("end")]
         [AllowAnonymous]
         public async Task<IActionResult> EndMatch(MatchDto match)

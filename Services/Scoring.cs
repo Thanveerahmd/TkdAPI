@@ -162,7 +162,9 @@ namespace TkdScoringApp.API.Services
             var match = await GetMatch(score.MatchId);
 
             var NoOfJudges = match.NoOfJudges;
-
+            if(tempScore == null){
+                return null;
+            }
             if ((tempScore.NoOfConfirmation + 1) == NoOfJudges)
             {
                 return null;

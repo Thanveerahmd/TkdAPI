@@ -51,5 +51,15 @@ namespace TkdScoringApp.API.Services
         {
             return await _context.Match.FirstOrDefaultAsync(p => p.RingId == ring && p.isFinished == false);
         }
+
+        public async Task<Match> GetMatch(int matchId)
+        {
+            return await _context.Match.FirstOrDefaultAsync(p => p.Id == matchId);
+        }
+
+        public void updateMatch(Match match)
+        {
+            _context.Update(match);
+        }
     }
 }

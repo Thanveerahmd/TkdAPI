@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using TkdAPI.Entities;
 using TkdScoringApp.API.Dto;
 using TkdScoringApp.API.Entities;
+using Microsoft.AspNetCore.SignalR;
 using TkdScoringApp.API.iService;
 
 namespace TkdScoringApp.API.Controllers
@@ -17,16 +18,20 @@ namespace TkdScoringApp.API.Controllers
         private readonly iTkdRepo _repo;
         private readonly iScoring _scoring;
 
+        private IHubContext<ChartHub> _hub;
+
+
         public MatchController(
                IMapper mapper,
                iTkdRepo repo,
+               IHubContext<ChartHub> hub,
                iScoring scoring
                )
         {
             _repo = repo;
             _scoring = scoring;
             _mapper = mapper;
-
+            _hub = hub;
         }
 
         [HttpPost("create")]
@@ -36,13 +41,35 @@ namespace TkdScoringApp.API.Controllers
             var newMatch = _mapper.Map<Match>(match);
             newMatch.isPause = true;
             var ringAvailability = await _repo.checkWhetherRingAvailable(match.RingId);
-            if(ringAvailability != null){
-                return BadRequest(new { message = "Selected Ring Not Available"});
+            if (ringAvailability != null)
+            {
+                return BadRequest(new { message = "Selected Ring Not Available" });
             }
             _repo.Add(newMatch);
             if (await _repo.Save())
             {
                 return Ok(newMatch);
+            }
+            return BadRequest();
+        }
+
+        [HttpPost("end")]
+        [AllowAnonymous]
+        public async Task<IActionResult> EndMatch(MatchDto match)
+        {
+            var newMatch = _mapper.Map<Match>(match);
+            var matchRecord = await _repo.GetMatch(newMatch.Id);
+
+            matchRecord.isFinished = true;
+            matchRecord.isPause = false;
+
+            _repo.updateMatch(matchRecord);
+
+            if (await _repo.Save())
+            {
+                await _hub.Clients.All.SendAsync("matchEnd", true);
+
+                return Ok();
             }
             return BadRequest();
         }

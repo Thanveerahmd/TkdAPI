@@ -12,6 +12,11 @@ namespace TkdScoringApp.API.iService
         void DeleteAll<T>(ICollection<T> entity) where T : class;
 
         Task<Match> checkWhetherRingAvailable(string ring);
+
+        Task<Match> GetMatch(int matchId);
+
+        void updateMatch(Match match);
+        
         Task<bool> Save();
     }
 }

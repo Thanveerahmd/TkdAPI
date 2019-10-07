@@ -59,7 +59,7 @@ namespace TkdScoringApp.API.Controllers
         {
             var newMatch = _mapper.Map<Match>(match);
             var matchRecord = await _repo.GetMatch(newMatch.Id);
-            var obj = new { matchStart = true,matchBreak=false };
+            var obj = new { matchStart = true,matchBreak=false,matchId = newMatch.Id };
             if (status == "start" || status == "resume")
             {
                 matchRecord.isPause = false;
@@ -69,14 +69,14 @@ namespace TkdScoringApp.API.Controllers
                 if (status == "pause")
                 {
                     matchRecord.isPause = true;
-                    obj = new { matchStart = false,matchBreak=false };
+                    obj = new { matchStart = false,matchBreak=false,matchId = newMatch.Id };
                 }
                 else
                 {
                     if (status == "break")
                     {
                         matchRecord.isPause = true;
-                        obj = new { matchStart = false,matchBreak = true };
+                        obj = new { matchStart = false,matchBreak = true,matchId = newMatch.Id };
                     }else{
                     return BadRequest(new { message = "Status not found" });
                     }
@@ -110,7 +110,7 @@ namespace TkdScoringApp.API.Controllers
 
             if (await _repo.Save())
             {
-                await _hub.Clients.All.SendAsync("matchEnd", true);
+                await _hub.Clients.All.SendAsync("matchEnd", matchRecord);
 
                 return Ok();
             }

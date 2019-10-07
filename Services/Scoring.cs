@@ -6,6 +6,7 @@ using TkdScoringApp.API.iService;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System;
+using Microsoft.AspNetCore.SignalR;
 using System.Collections.Generic;
 
 namespace TkdScoringApp.API.Services
@@ -16,11 +17,14 @@ namespace TkdScoringApp.API.Services
         private readonly iTkdRepo _repo;
         private readonly iUser _user;
 
-        public Scoring(DataContext context, iTkdRepo repo, iUser user)
+        private IHubContext<ChartHub> _hub;
+
+        public Scoring(DataContext context, iTkdRepo repo, iUser user, IHubContext<ChartHub> hub)
         {
             _context = context;
             _repo = repo;
             _user = user;
+            _hub = hub;
         }
 
 
@@ -162,13 +166,14 @@ namespace TkdScoringApp.API.Services
             var match = await GetMatch(score.MatchId);
 
             var NoOfJudges = match.NoOfJudges;
-            if(tempScore == null){
-                return null;
-            }
-            if ((tempScore.NoOfConfirmation + 1) == NoOfJudges)
+            if (tempScore == null)
             {
                 return null;
             }
+            // if ((tempScore.NoOfConfirmation + 1) == NoOfJudges)
+            // {
+            //     return null;
+            // }
 
             if ((score.NoOfConsecutiveTaps == tempScore.NoOfConsecutiveTaps) && (score.JudgeId == tempScore.JudgeId))
             {
@@ -183,7 +188,7 @@ namespace TkdScoringApp.API.Services
 
             var time = Convert.ToInt32(timeDiff.TotalSeconds);
 
-            if (time < 5)
+            if (time < 60)
             {
                 switch (score.NoOfConsecutiveTaps)
                 {
@@ -215,7 +220,6 @@ namespace TkdScoringApp.API.Services
             if ((tempScore.NoOfConfirmation + 1) == formula)
             {
                 //add signalR
-
                 score.NoOfConfirmation = tempScore.NoOfConfirmation + 1;
                 var newscore = new Score();
 
@@ -225,6 +229,7 @@ namespace TkdScoringApp.API.Services
 
                 _repo.Add(newscore);
 
+                await _hub.Clients.All.SendAsync("liveScoreUpdate",newscore);
                 var player = await _user.GetPlayer(score.PlayerId);
                 player.Totalscore += score.Score;
                 _context.Player.Update(player);

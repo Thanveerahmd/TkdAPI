@@ -8,6 +8,7 @@ using TkdScoringApp.API.Entities;
 using Microsoft.AspNetCore.SignalR;
 using TkdScoringApp.API.iService;
 using TkdAPI.Dto;
+using System.Collections.Generic;
 
 namespace TkdScoringApp.API.Controllers
 {
@@ -323,6 +324,46 @@ namespace TkdScoringApp.API.Controllers
                 return Ok();
             }
             return BadRequest();
+        }
+
+        [HttpGet("summary/{matchId}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetMatchSummary(int matchId)
+        {
+            var match = await _repo.GetMatch(matchId);
+
+            if (match == null)
+            {
+                return BadRequest(new { message = " There is no Such match" });
+            }
+
+            IList<Score> Player1Score = new List<Score>();
+            IList<Score> Player2Score = new List<Score>();
+            IList<Foul> Player1Foul = new List<Foul>();
+            IList<Foul> Player2Foul = new List<Foul>();
+
+            var count = 1;
+            foreach (var item in match.Players)
+            {
+                if (count > 1)
+                {
+                    Player2Score = await _scoring.GetScoresOfMatch(matchId, item.id);
+                    Player2Foul = await _scoring.GetFoulOfMatch(matchId, item.id);
+                    break;
+                }
+                Player1Score = await _scoring.GetScoresOfMatch(matchId, item.id);
+                Player1Foul = await _scoring.GetFoulOfMatch(matchId, item.id);
+                count++;
+            }
+
+            return Ok(new
+            {
+                player1score = Player1Score,
+                player1foul = Player1Foul,
+                player2score = Player2Score,
+                player2foul = Player2Foul
+            }
+          );
         }
 
     }

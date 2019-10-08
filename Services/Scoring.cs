@@ -392,5 +392,19 @@ namespace TkdScoringApp.API.Services
             _context.Player.Update(user);
             return await _context.SaveChangesAsync() > 0;
         }
+
+        public async Task<IList<Score>> GetScoresOfMatch(int matchId,int playerId)
+        {
+            var score = await _context.Score.Where(p => p.MatchId==matchId).Where(p=> p.PlayerId == playerId).ToListAsync();
+
+            return score;
+        }
+
+        public async Task<IList<Foul>> GetFoulOfMatch(int matchId,int playerId)
+        {
+             var foul = await _context.Foul.Where(p => p.MatchId==matchId).Where(p=> p.PlayerId == playerId).ToListAsync();
+
+            return foul;
+        }
     }
 }

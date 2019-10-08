@@ -43,6 +43,9 @@ namespace TkdScoringApp.API.Mapper
             CreateMap<TurningKickHead, ScoreDto>();
             CreateMap<ScoreDto, TurningKickHead>();
 
+            CreateMap<ScoreDto,Score>();
+            CreateMap<Score,ScoreDto>();
+
         }
     }
 }

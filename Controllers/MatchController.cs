@@ -305,7 +305,10 @@ namespace TkdScoringApp.API.Controllers
             if (updatefoul)
             {
                 _repo.Add(newfoul);
-                return Ok();
+                 if (await _repo.Save())
+                {
+                    return Ok();
+                }
             }
             return BadRequest();
         }
@@ -316,12 +319,15 @@ namespace TkdScoringApp.API.Controllers
         {
             var newscore = _mapper.Map<Score>(score);
 
-            var update = await _scoring.UpdateScore(newscore);
+            var update = await _scoring.UpdateScoreManual(newscore);
 
             if (update)
             {
                 _repo.Add(newscore);
-                return Ok();
+                 if (await _repo.Save())
+                {
+                    return Ok();
+                }
             }
             return BadRequest();
         }
@@ -330,7 +336,7 @@ namespace TkdScoringApp.API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetMatchSummary(int matchId)
         {
-            var match = await _repo.GetMatch(matchId);
+            var match = await _scoring.GetMatch(matchId);
 
             if (match == null)
             {
@@ -370,7 +376,7 @@ namespace TkdScoringApp.API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> MatchSummary(int matchId)
         {
-            var match = await _repo.GetMatch(matchId);
+            var match = await _scoring.GetMatch(matchId);
 
             if (match == null)
             {

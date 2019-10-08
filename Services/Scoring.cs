@@ -380,7 +380,7 @@ namespace TkdScoringApp.API.Services
 
         }
 
-        public async Task<bool> UpdateScore(Score score)
+        public async Task<bool> UpdateScoreManual(Score score)
         {
             var user = await _user.GetPlayer(score.PlayerId);
 

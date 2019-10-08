@@ -53,7 +53,7 @@ namespace TkdScoringApp.API.Services
                 if (item.id != foul.PlayerId)
                 {
                     item.Totalscore += foul.FoulValue;
-                    
+
                     _context.Player.Update(item);
 
                     var newscore = new Score();
@@ -364,6 +364,20 @@ namespace TkdScoringApp.API.Services
 
 
             }
+        }
+
+        public async Task<bool> RemoveJudge(Judge judge)
+        {
+            var judgeData = await _user.GetJudge(judge.id);
+
+            var match = await GetMatch(judgeData.MatchId);
+
+
+
+            match.Judges.Remove(judgeData);
+            _repo.Delete(judgeData);
+            return await _repo.Save();
+
         }
 
 

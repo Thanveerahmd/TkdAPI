@@ -9,6 +9,5 @@ namespace TkdScoringApp.API.iService
         Task<Admin> GetAdminByUsername(string username);
         Task<Judge> GetJudge(int id);
         Task<Player> GetPlayer(int id);
-        Task<bool> RemoveJudge(Judge judge);
     }
 }

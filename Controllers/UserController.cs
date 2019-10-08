@@ -138,7 +138,7 @@ namespace TkdScoringApp.API.Controllers
             if (await _repo.Save())
             {
                 await _hub.Clients.All.SendAsync("judgeJoinUpdate", judgeUser);
-                return Ok(match);
+                return Ok(new{ match=match,judge=judgeUser});
             }
 
             return BadRequest();
@@ -184,11 +184,14 @@ namespace TkdScoringApp.API.Controllers
 
             var judgeUser = _mapper.Map<Judge>(judge);
 
-            if (await _user.RemoveJudge(judgeUser))
+            if (await _score.RemoveJudge(judgeUser))
             {
+                await _hub.Clients.All.SendAsync("judgeRemove", judgeUser);
                 return Ok();
             }
             return BadRequest();
+
+            // return Ok();
         }
     }
 }

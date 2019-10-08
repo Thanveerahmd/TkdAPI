@@ -14,13 +14,11 @@ namespace TkdScoringApp.API.Services
     {
         private readonly DataContext _context;
         private readonly iTkdRepo _repo;
-        private readonly iScoring _scoring;
 
-        public UserService(DataContext context, iTkdRepo repo, iScoring scoring)
+        public UserService(DataContext context, iTkdRepo repo)
         {
             _context = context;
             _repo = repo;
-            _scoring = scoring;
         }
         public Task<Admin> GetAdmin(int id)
         {
@@ -43,17 +41,6 @@ namespace TkdScoringApp.API.Services
             return await _context.Player.FindAsync(id);
         }
 
-        public async Task<bool> RemoveJudge(Judge judge)
-        {
-            var judgeData = await GetJudge(judge.id);
-            
-            var match =await _scoring.GetMatch(judgeData.MatchId);
-
-            match.Judges.Remove(judge);
-
-            _repo.Delete(judge);
-
-           return  await _repo.Save();
-        }
+        
     }
 }

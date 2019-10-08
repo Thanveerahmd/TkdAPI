@@ -44,6 +44,29 @@ namespace TkdScoringApp.API.Services
         {
             var user = await _user.GetPlayer(foul.PlayerId);
 
+            var match = await GetMatch(foul.MatchId);
+
+            var players = match.Players;
+
+            foreach (var item in players)
+            {
+                if (item.id != foul.PlayerId)
+                {
+                    item.Totalscore += foul.FoulValue;
+                    
+                    _context.Player.Update(item);
+
+                    var newscore = new Score();
+                    newscore.MatchId = foul.MatchId;
+                    newscore.PlayerId = item.id;
+                    newscore.ScoreValue = foul.FoulValue;
+
+                    await _hub.Clients.All.SendAsync("liveScoreUpdate", newscore);
+
+                    _repo.Add(newscore);
+                }
+            }
+
             if (user == null)
             {
                 throw new AppException("There is no Such Player");
@@ -220,7 +243,7 @@ namespace TkdScoringApp.API.Services
 
             if ((tempScore.NoOfConfirmation + 1) == formula)
             {
-                //add signalR
+
                 score.NoOfConfirmation = tempScore.NoOfConfirmation + 1;
                 var newscore = new Score();
 
@@ -231,6 +254,7 @@ namespace TkdScoringApp.API.Services
                 _repo.Add(newscore);
 
                 await _hub.Clients.All.SendAsync("liveScoreUpdate", newscore);
+
                 var player = await _user.GetPlayer(score.PlayerId);
                 player.Totalscore += score.Score;
                 _context.Player.Update(player);
@@ -342,6 +366,6 @@ namespace TkdScoringApp.API.Services
             }
         }
 
-        
+
     }
 }

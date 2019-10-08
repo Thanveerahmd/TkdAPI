@@ -45,8 +45,9 @@ namespace TkdScoringApp.API.Services
 
         public async Task<bool> RemoveJudge(Judge judge)
         {
+            var judgeData = await GetJudge(judge.id);
             
-            var match =await _scoring.GetMatch(judge.id);
+            var match =await _scoring.GetMatch(judgeData.MatchId);
 
             match.Judges.Remove(judge);
 

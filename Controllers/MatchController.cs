@@ -7,6 +7,7 @@ using TkdScoringApp.API.Dto;
 using TkdScoringApp.API.Entities;
 using Microsoft.AspNetCore.SignalR;
 using TkdScoringApp.API.iService;
+using TkdAPI.Dto;
 
 namespace TkdScoringApp.API.Controllers
 {
@@ -59,7 +60,7 @@ namespace TkdScoringApp.API.Controllers
         {
             var newMatch = _mapper.Map<Match>(match);
             var matchRecord = await _repo.GetMatch(newMatch.Id);
-            var obj = new { matchStart = true,matchBreak=false,matchId = newMatch.Id };
+            var obj = new { matchStart = true, matchBreak = false, matchId = newMatch.Id };
             if (status == "start" || status == "resume")
             {
                 matchRecord.isPause = false;
@@ -69,16 +70,18 @@ namespace TkdScoringApp.API.Controllers
                 if (status == "pause")
                 {
                     matchRecord.isPause = true;
-                    obj = new { matchStart = false,matchBreak=false,matchId = newMatch.Id };
+                    obj = new { matchStart = false, matchBreak = false, matchId = newMatch.Id };
                 }
                 else
                 {
                     if (status == "break")
                     {
                         matchRecord.isPause = true;
-                        obj = new { matchStart = false,matchBreak = true,matchId = newMatch.Id };
-                    }else{
-                    return BadRequest(new { message = "Status not found" });
+                        obj = new { matchStart = false, matchBreak = true, matchId = newMatch.Id };
+                    }
+                    else
+                    {
+                        return BadRequest(new { message = "Status not found" });
                     }
                 }
             }
@@ -289,5 +292,23 @@ namespace TkdScoringApp.API.Controllers
                 return BadRequest();
             }
         }
+
+
+        [HttpPost("foul")]
+        [AllowAnonymous]
+        public async Task<IActionResult> UpdateFoul(FoulDto foul)
+        {
+            var newfoul = _mapper.Map<Foul>(foul);
+
+            var updatefoul = await _scoring.UpdateFoul(newfoul);
+
+            if (updatefoul)
+            {
+                _repo.Add(newfoul);
+                return Ok();
+            }
+            return BadRequest();
+        }
+
     }
 }

@@ -1,3 +1,5 @@
+using System;
+
 namespace TkdScoringApp.API.Entities
 {
     public class Foul
@@ -6,5 +8,6 @@ namespace TkdScoringApp.API.Entities
         public int PlayerId { get; set; }
         public int MatchId { get; set; }
         public int FoulValue { get; set; }
+         public DateTime time { get; set; }
     }
 }

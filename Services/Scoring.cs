@@ -40,17 +40,18 @@ namespace TkdScoringApp.API.Services
 
         }
 
-        public async void UpdateFoul(int PlayerId, int foul)
+        public async Task<bool> UpdateFoul(Foul foul)
         {
-            var user = await _user.GetPlayer(PlayerId);
+            var user = await _user.GetPlayer(foul.PlayerId);
 
             if (user == null)
             {
                 throw new AppException("There is no Such Player");
             }
-            user.Totalfoul += foul;
+            user.Totalfoul += foul.FoulValue;
 
             _context.Player.Update(user);
+            return await _context.SaveChangesAsync() > 0;
         }
 
         public async Task<bool> HasRecord(TempScore score)
@@ -229,7 +230,7 @@ namespace TkdScoringApp.API.Services
 
                 _repo.Add(newscore);
 
-                await _hub.Clients.All.SendAsync("liveScoreUpdate",newscore);
+                await _hub.Clients.All.SendAsync("liveScoreUpdate", newscore);
                 var player = await _user.GetPlayer(score.PlayerId);
                 player.Totalscore += score.Score;
                 _context.Player.Update(player);
@@ -341,6 +342,6 @@ namespace TkdScoringApp.API.Services
             }
         }
 
-
+        
     }
 }

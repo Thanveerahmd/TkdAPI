@@ -380,7 +380,7 @@ namespace TkdScoringApp.API.Services
 
         }
 
-     public async Task<bool> UpdateScore(Score score)
+        public async Task<bool> UpdateScore(Score score)
         {
             var user = await _user.GetPlayer(score.PlayerId);
 
@@ -393,17 +393,35 @@ namespace TkdScoringApp.API.Services
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<IList<Score>> GetScoresOfMatch(int matchId,int playerId)
+        public async Task<IList<Score>> GetScoresOfMatch(int matchId, int playerId)
         {
-            var score = await _context.Score.Where(p => p.MatchId==matchId).Where(p=> p.PlayerId == playerId).ToListAsync();
+            var score = await _context.Score.Where(p => p.MatchId == matchId).Where(p => p.PlayerId == playerId).ToListAsync();
 
             return score;
         }
 
-        public async Task<IList<Foul>> GetFoulOfMatch(int matchId,int playerId)
+        public async Task<IList<Foul>> GetFoulOfMatch(int matchId, int playerId)
         {
-             var foul = await _context.Foul.Where(p => p.MatchId==matchId).Where(p=> p.PlayerId == playerId).ToListAsync();
+            var foul = await _context.Foul.Where(p => p.MatchId == matchId).Where(p => p.PlayerId == playerId).ToListAsync();
 
+            return foul;
+        }
+
+        public async Task<IList<Score>> GetScore(int matchId)
+        {
+            var score = await _context.Score
+            .Where(p => p.MatchId == matchId)
+            .ToListAsync();
+
+            return score;
+        }
+
+        public async Task<IList<Foul>> GetFoul(int matchId)
+        {
+            var foul = await _context.Foul
+            .Where(p => p.MatchId == matchId)
+            .ToListAsync();
+            
             return foul;
         }
     }

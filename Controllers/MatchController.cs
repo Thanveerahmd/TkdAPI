@@ -366,5 +366,30 @@ namespace TkdScoringApp.API.Controllers
           );
         }
 
+        [HttpGet("{matchId}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> MatchSummary(int matchId)
+        {
+            var match = await _repo.GetMatch(matchId);
+
+            if (match == null)
+            {
+                return BadRequest(new { message = " There is no Such match" });
+            }
+
+            IList<Score> Score = new List<Score>();
+            IList<Foul> Foul = new List<Foul>();
+
+            Score = await _scoring.GetScore(matchId);
+            Foul = await _scoring.GetFoul(matchId);
+
+            return Ok(new
+            {
+                score = Score,
+                foul = Foul
+            }
+          );
+        }
+
     }
 }

@@ -309,5 +309,21 @@ namespace TkdScoringApp.API.Controllers
             return BadRequest();
         }
 
+        [HttpPost("score")]
+        [AllowAnonymous]
+        public async Task<IActionResult> UpdateScore(ScoreDto score)
+        {
+            var newscore = _mapper.Map<Score>(score);
+
+            var update = await _scoring.UpdateScore(newscore);
+
+            if (update)
+            {
+                _repo.Add(newscore);
+                return Ok();
+            }
+            return BadRequest();
+        }
+
     }
 }

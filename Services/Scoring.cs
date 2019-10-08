@@ -380,6 +380,17 @@ namespace TkdScoringApp.API.Services
 
         }
 
+     public async Task<bool> UpdateScore(Score score)
+        {
+            var user = await _user.GetPlayer(score.PlayerId);
 
+            if (user == null)
+            {
+                throw new AppException("There is no Such Player");
+            }
+            user.Totalscore += score.ScoreValue;
+            _context.Player.Update(user);
+            return await _context.SaveChangesAsync() > 0;
+        }
     }
 }

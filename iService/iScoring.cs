@@ -11,7 +11,7 @@ namespace TkdScoringApp.API.iService
         Task<Match> GetMatchByRingId(string ringId);
         Task<bool> UpdateFoul(Foul foul);
         Task<TempScore> UpdateScore(TempScore score);
-
+        Task<bool> UpdateScore(Score score);
         Task<bool> RemoveJudge(Judge judge);
 
     }

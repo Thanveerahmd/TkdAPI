@@ -2,6 +2,7 @@ using AutoMapper;
 using TkdScoringApp.API.Dto;
 using TkdScoringApp.API.Entities;
 using TkdAPI.Entities;
+using TkdAPI.Dto;
 
 namespace TkdScoringApp.API.Mapper
 {
@@ -14,6 +15,9 @@ namespace TkdScoringApp.API.Mapper
 
             CreateMap<AdminTokenReturnDto, Admin>();
             CreateMap<Admin, AdminTokenReturnDto>();
+
+            CreateMap<FoulDto, Foul>();
+            CreateMap<Foul, FoulDto>();
 
             CreateMap<JudgeDto, Judge>();
             CreateMap<Judge, JudgeDto>();

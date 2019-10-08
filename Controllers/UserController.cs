@@ -176,5 +176,19 @@ namespace TkdScoringApp.API.Controllers
             return BadRequest();
         }
 
+
+        [HttpPost("removejudge")]
+        [AllowAnonymous]
+        public async Task<IActionResult> RemoveJudge(JudgeDto judge)
+        {
+
+            var judgeUser = _mapper.Map<Judge>(judge);
+
+            if (await _user.RemoveJudge(judgeUser))
+            {
+                return Ok();
+            }
+            return BadRequest();
+        }
     }
 }

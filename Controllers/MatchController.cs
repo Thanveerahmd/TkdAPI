@@ -293,7 +293,6 @@ namespace TkdScoringApp.API.Controllers
             }
         }
 
-
         [HttpPost("foul")]
         [AllowAnonymous]
         public async Task<IActionResult> UpdateFoul(FoulDto foul)

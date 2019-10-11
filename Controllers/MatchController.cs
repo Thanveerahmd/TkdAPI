@@ -20,6 +20,8 @@ namespace TkdScoringApp.API.Controllers
         private readonly iTkdRepo _repo;
         private readonly iScoring _scoring;
 
+        private readonly iUser _user;
+
         private IHubContext<ChartHub> _hub;
 
 
@@ -27,13 +29,15 @@ namespace TkdScoringApp.API.Controllers
                IMapper mapper,
                iTkdRepo repo,
                IHubContext<ChartHub> hub,
-               iScoring scoring
+               iScoring scoring,
+               iUser user
                )
         {
             _repo = repo;
             _scoring = scoring;
             _mapper = mapper;
             _hub = hub;
+            _user = user;
         }
 
         [HttpPost("create")]
@@ -140,6 +144,9 @@ namespace TkdScoringApp.API.Controllers
 
                     if (await _repo.Save())
                     {
+                        var player = await _user.GetPlayer(newscore.PlayerId);
+                        var obj = new { score = newscore, player = player };
+                        await _hub.Clients.All.SendAsync("judgeTempUpdate", obj);
                         return Ok();
                     }
 
@@ -155,6 +162,10 @@ namespace TkdScoringApp.API.Controllers
 
                 if (await _repo.Save())
                 {
+
+                    var player = await _user.GetPlayer(newscore.PlayerId);
+                    var obj = new { score = newscore, player = player };
+                    await _hub.Clients.All.SendAsync("judgeTempUpdate", obj);
                     return Ok();
                 }
 
@@ -176,7 +187,13 @@ namespace TkdScoringApp.API.Controllers
                 {
                     newscore.NoOfConfirmation = updatescore.NoOfConfirmation;
                     _repo.Add(newscore);
-                    return Ok();
+                    if (await _repo.Save())
+                    {
+                        var player = await _user.GetPlayer(newscore.PlayerId);
+                        var obj = new { score = newscore, player = player };
+                        await _hub.Clients.All.SendAsync("judgeTempUpdate", obj);
+                        return Ok();
+                    }
                 }
                 return Ok();
             }
@@ -188,6 +205,9 @@ namespace TkdScoringApp.API.Controllers
 
                 if (await _repo.Save())
                 {
+                    var player = await _user.GetPlayer(newscore.PlayerId);
+                    var obj = new { score = newscore, player = player };
+                    await _hub.Clients.All.SendAsync("judgeTempUpdate", obj);
                     return Ok();
                 }
 
@@ -209,7 +229,13 @@ namespace TkdScoringApp.API.Controllers
                 {
                     newscore.NoOfConfirmation = updatescore.NoOfConfirmation;
                     _repo.Add(newscore);
-                    return Ok();
+                    if (await _repo.Save())
+                    {
+                        var player = await _user.GetPlayer(newscore.PlayerId);
+                        var obj = new { score = newscore, player = player };
+                        await _hub.Clients.All.SendAsync("judgeTempUpdate", obj);
+                        return Ok();
+                    }
                 }
                 return Ok();
             }
@@ -221,6 +247,9 @@ namespace TkdScoringApp.API.Controllers
 
                 if (await _repo.Save())
                 {
+                    var player = await _user.GetPlayer(newscore.PlayerId);
+                    var obj = new { score = newscore, player = player };
+                    await _hub.Clients.All.SendAsync("judgeTempUpdate", obj);
                     return Ok();
                 }
 
@@ -242,7 +271,13 @@ namespace TkdScoringApp.API.Controllers
                 {
                     newscore.NoOfConfirmation = updatescore.NoOfConfirmation;
                     _repo.Add(newscore);
-                    return Ok();
+                    if (await _repo.Save())
+                    {
+                        var player = await _user.GetPlayer(newscore.PlayerId);
+                        var obj = new { score = newscore, player = player };
+                        await _hub.Clients.All.SendAsync("judgeTempUpdate", obj);
+                        return Ok();
+                    }
                 }
                 return Ok();
             }
@@ -254,6 +289,9 @@ namespace TkdScoringApp.API.Controllers
 
                 if (await _repo.Save())
                 {
+                    var player = await _user.GetPlayer(newscore.PlayerId);
+                    var obj = new { score = newscore, player = player };
+                    await _hub.Clients.All.SendAsync("judgeTempUpdate", obj);
                     return Ok();
                 }
 
@@ -275,7 +313,13 @@ namespace TkdScoringApp.API.Controllers
                 {
                     newscore.NoOfConfirmation = updatescore.NoOfConfirmation;
                     _repo.Add(newscore);
-                    return Ok();
+                    if (await _repo.Save())
+                    {
+                        var player = await _user.GetPlayer(newscore.PlayerId);
+                        var obj = new { score = newscore, player = player };
+                        await _hub.Clients.All.SendAsync("judgeTempUpdate", obj);
+                        return Ok();
+                    }
                 }
                 return Ok();
             }
@@ -287,6 +331,9 @@ namespace TkdScoringApp.API.Controllers
 
                 if (await _repo.Save())
                 {
+                    var player = await _user.GetPlayer(newscore.PlayerId);
+                    var obj = new { score = newscore, player = player };
+                    await _hub.Clients.All.SendAsync("judgeTempUpdate", obj);
                     return Ok();
                 }
 
@@ -305,7 +352,7 @@ namespace TkdScoringApp.API.Controllers
             if (updatefoul)
             {
                 _repo.Add(newfoul);
-                 if (await _repo.Save())
+                if (await _repo.Save())
                 {
                     return Ok();
                 }
@@ -324,7 +371,7 @@ namespace TkdScoringApp.API.Controllers
             if (update)
             {
                 _repo.Add(newscore);
-                 if (await _repo.Save())
+                if (await _repo.Save())
                 {
                     return Ok();
                 }

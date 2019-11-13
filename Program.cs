@@ -14,12 +14,22 @@ namespace TkdScoringApp.API
     {
         public static void Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            CreateWebHostBuilder(args).UseUrls("http://*:5000").Build().Run();
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>();
+
+            //  public static IWebHost BuildWebHost(string[] args) =>
+            // WebHost.CreateDefaultBuilder(args)
+            //     .UseStartup<Startup>()
+            //     .UseContentRoot(Directory.GetCurrentDirectory())
+            //     .UseIISIntegration()
+            //     .UseKestrel() 
+            //     .UseUrls("http://*:4009")
+            //     .Build();
+    }
                 
     }
-}
+

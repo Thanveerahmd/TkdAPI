@@ -131,7 +131,9 @@ namespace TkdScoringApp.API.Controllers
         {
 
             var newscore = _mapper.Map<Kickhead>(score);
-
+            var player = await _user.GetPlayer(newscore.PlayerId);
+            var obj = new { score = newscore, player = player };
+            await _hub.Clients.All.SendAsync("judgeTempUpdate", obj);
             if (await _scoring.HasRecord(newscore))
             {
                 var updatescore = await _scoring.UpdateScore(newscore);
@@ -144,9 +146,7 @@ namespace TkdScoringApp.API.Controllers
 
                     if (await _repo.Save())
                     {
-                        var player = await _user.GetPlayer(newscore.PlayerId);
-                        var obj = new { score = newscore, player = player };
-                        await _hub.Clients.All.SendAsync("judgeTempUpdate", obj);
+
                         return Ok();
                     }
 
@@ -162,10 +162,6 @@ namespace TkdScoringApp.API.Controllers
 
                 if (await _repo.Save())
                 {
-
-                    var player = await _user.GetPlayer(newscore.PlayerId);
-                    var obj = new { score = newscore, player = player };
-                    await _hub.Clients.All.SendAsync("judgeTempUpdate", obj);
                     return Ok();
                 }
 
@@ -178,7 +174,9 @@ namespace TkdScoringApp.API.Controllers
         public async Task<IActionResult> UpdateKickbody(ScoreDto score)
         {
             var newscore = _mapper.Map<KickBody>(score);
-
+            var player = await _user.GetPlayer(newscore.PlayerId);
+            var obj = new { score = newscore, player = player };
+            await _hub.Clients.All.SendAsync("judgeTempUpdate", obj);
             if (await _scoring.HasRecord(newscore))
             {
                 var updatescore = await _scoring.UpdateScore(newscore);
@@ -189,9 +187,7 @@ namespace TkdScoringApp.API.Controllers
                     _repo.Add(newscore);
                     if (await _repo.Save())
                     {
-                        var player = await _user.GetPlayer(newscore.PlayerId);
-                        var obj = new { score = newscore, player = player };
-                        await _hub.Clients.All.SendAsync("judgeTempUpdate", obj);
+
                         return Ok();
                     }
                 }
@@ -205,9 +201,6 @@ namespace TkdScoringApp.API.Controllers
 
                 if (await _repo.Save())
                 {
-                    var player = await _user.GetPlayer(newscore.PlayerId);
-                    var obj = new { score = newscore, player = player };
-                    await _hub.Clients.All.SendAsync("judgeTempUpdate", obj);
                     return Ok();
                 }
 
@@ -220,7 +213,9 @@ namespace TkdScoringApp.API.Controllers
         public async Task<IActionResult> UpdatePunch(ScoreDto score)
         {
             var newscore = _mapper.Map<Punch>(score);
-
+            var player = await _user.GetPlayer(newscore.PlayerId);
+            var obj = new { score = newscore, player = player };
+            await _hub.Clients.All.SendAsync("judgeTempUpdate", obj);
             if (await _scoring.HasRecord(newscore))
             {
                 var updatescore = await _scoring.UpdateScore(newscore);
@@ -231,9 +226,7 @@ namespace TkdScoringApp.API.Controllers
                     _repo.Add(newscore);
                     if (await _repo.Save())
                     {
-                        var player = await _user.GetPlayer(newscore.PlayerId);
-                        var obj = new { score = newscore, player = player };
-                        await _hub.Clients.All.SendAsync("judgeTempUpdate", obj);
+
                         return Ok();
                     }
                 }
@@ -247,9 +240,7 @@ namespace TkdScoringApp.API.Controllers
 
                 if (await _repo.Save())
                 {
-                    var player = await _user.GetPlayer(newscore.PlayerId);
-                    var obj = new { score = newscore, player = player };
-                    await _hub.Clients.All.SendAsync("judgeTempUpdate", obj);
+
                     return Ok();
                 }
 
@@ -262,6 +253,9 @@ namespace TkdScoringApp.API.Controllers
         public async Task<IActionResult> UpdateTurningKickbody(ScoreDto score)
         {
             var newscore = _mapper.Map<TurningKickBody>(score);
+            var player = await _user.GetPlayer(newscore.PlayerId);
+            var obj = new { score = newscore, player = player };
+            await _hub.Clients.All.SendAsync("judgeTempUpdate", obj);
 
             if (await _scoring.HasRecord(newscore))
             {
@@ -273,9 +267,7 @@ namespace TkdScoringApp.API.Controllers
                     _repo.Add(newscore);
                     if (await _repo.Save())
                     {
-                        var player = await _user.GetPlayer(newscore.PlayerId);
-                        var obj = new { score = newscore, player = player };
-                        await _hub.Clients.All.SendAsync("judgeTempUpdate", obj);
+
                         return Ok();
                     }
                 }
@@ -289,9 +281,6 @@ namespace TkdScoringApp.API.Controllers
 
                 if (await _repo.Save())
                 {
-                    var player = await _user.GetPlayer(newscore.PlayerId);
-                    var obj = new { score = newscore, player = player };
-                    await _hub.Clients.All.SendAsync("judgeTempUpdate", obj);
                     return Ok();
                 }
 
@@ -304,7 +293,9 @@ namespace TkdScoringApp.API.Controllers
         public async Task<IActionResult> UpdateTurningKickHead(ScoreDto score)
         {
             var newscore = _mapper.Map<TurningKickHead>(score);
-
+            var player = await _user.GetPlayer(newscore.PlayerId);
+            var obj = new { score = newscore, player = player };
+            await _hub.Clients.All.SendAsync("judgeTempUpdate", obj);
             if (await _scoring.HasRecord(newscore))
             {
                 var updatescore = await _scoring.UpdateScore(newscore);
@@ -315,9 +306,7 @@ namespace TkdScoringApp.API.Controllers
                     _repo.Add(newscore);
                     if (await _repo.Save())
                     {
-                        var player = await _user.GetPlayer(newscore.PlayerId);
-                        var obj = new { score = newscore, player = player };
-                        await _hub.Clients.All.SendAsync("judgeTempUpdate", obj);
+
                         return Ok();
                     }
                 }
@@ -331,9 +320,7 @@ namespace TkdScoringApp.API.Controllers
 
                 if (await _repo.Save())
                 {
-                    var player = await _user.GetPlayer(newscore.PlayerId);
-                    var obj = new { score = newscore, player = player };
-                    await _hub.Clients.All.SendAsync("judgeTempUpdate", obj);
+
                     return Ok();
                 }
 

@@ -352,7 +352,7 @@ namespace TkdScoringApp.API.Controllers
         public async Task<IActionResult> UpdateScore(ScoreDto score)
         {
             var newscore = _mapper.Map<Score>(score);
-
+            newscore.Type = "force";
             var update = await _scoring.UpdateScoreManual(newscore);
 
             if (update)
@@ -377,31 +377,41 @@ namespace TkdScoringApp.API.Controllers
                 return BadRequest(new { message = " There is no Such match" });
             }
 
-            IList<Score> Player1Score = new List<Score>();
-            IList<Score> Player2Score = new List<Score>();
-            IList<Foul> Player1Foul = new List<Foul>();
-            IList<Foul> Player2Foul = new List<Foul>();
+            IList<Score> PlayerREDScore = new List<Score>();
+            IList<Score> PlayerBLUEScore = new List<Score>();
+            IList<Foul> PlayerREDFoul = new List<Foul>();
+            IList<Foul> PlayerBLUEFoul = new List<Foul>();
+            Player playerRED = new Player();
+            Player playerBLUE = new Player();
 
-            var count = 1;
             foreach (var item in match.Players)
             {
-                if (count > 1)
-                {
-                    Player2Score = await _scoring.GetScoresOfMatch(matchId, item.id);
-                    Player2Foul = await _scoring.GetFoulOfMatch(matchId, item.id);
-                    break;
+                if (item.Color == "red")
+                {   
+                    playerRED = item;
+                    PlayerREDScore = await _scoring.GetScoresOfMatch(matchId, item.id);
+                    PlayerREDFoul = await _scoring.GetFoulOfMatch(matchId, item.id);
                 }
-                Player1Score = await _scoring.GetScoresOfMatch(matchId, item.id);
-                Player1Foul = await _scoring.GetFoulOfMatch(matchId, item.id);
-                count++;
+
+                if (item.Color == "blue")
+                {
+
+                    playerBLUE = item;
+                    PlayerBLUEScore = await _scoring.GetScoresOfMatch(matchId, item.id);
+                    PlayerBLUEFoul = await _scoring.GetFoulOfMatch(matchId, item.id);
+                }
+
+
             }
 
             return Ok(new
             {
-                player1score = Player1Score,
-                player1foul = Player1Foul,
-                player2score = Player2Score,
-                player2foul = Player2Foul
+                PlayerRED = playerRED,
+                playerBLUE = playerBLUE,
+                PlayerREDScore = PlayerREDScore,
+                PlayerREDFoul = PlayerREDFoul,
+                PlayerBLUEScore = PlayerBLUEScore,
+                PlayerBLUEFoul = PlayerBLUEFoul
             }
           );
         }
@@ -429,6 +439,16 @@ namespace TkdScoringApp.API.Controllers
                 foul = Foul
             }
           );
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetAllMatches()
+        {
+            var match = await _scoring.GetAllMatches();
+
+
+            return Ok(match);
         }
 
     }

@@ -9,6 +9,8 @@ namespace TkdScoringApp.API.iService
     {
         Task<bool> HasRecord(TempScore score);
         Task<Match> GetMatch(int id);
+
+        Task<ICollection<Match>> GetAllMatches();
         Task<IList<Score>> GetScoresOfMatch(int matchId, int playerId);
         Task<IList<Score>> GetScore(int matchId);
         Task<IList<Foul>> GetFoul(int matchId);

@@ -11,6 +11,8 @@ namespace TkdScoringApp.API.Dto
         public int JudgeId { get; set; }
         public int NoOfConfirmation { get; set; }
         public int NoOfConsecutiveTaps { get; set; } // defult is 1
+
+        public int ScoreValue { get; set; }
         public ScoreDto()
         {
             time = DateTime.UtcNow;
